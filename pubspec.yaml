@@ -38,6 +38,7 @@ dependencies:
   window_manager: 0.4.3
   shelf: ^1.4.1
   shelf_web_socket: ^2.0.1
+  intl: ^0.17.0
 
 dev_dependencies:
   flutter_test:

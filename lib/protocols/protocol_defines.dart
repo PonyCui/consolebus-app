@@ -1,18 +1,21 @@
 import 'package:consoleapp/protocols/protocol_console.dart';
 
 class ProtoMessageBase {
+  final String deviceId;
   final String msgId;
   final String featureId;
   final int createdAt; // unit = ms
 
   ProtoMessageBase({
+    required this.deviceId,
     required this.msgId,
     required this.featureId,
     required this.createdAt,
   });
 
-  toJSON() {
+  toJson() {
     return {
+      "deviceId": deviceId,
       "msgId": msgId,
       "featureId": featureId,
       "createdAt": createdAt,

@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 class AppsConnectService extends ChangeNotifier {
   static final shared = AppsConnectService();
   final List<ProtoMessageBase> allMessages = [];
+  final Set<String> allDevices = {};
   AppsConnector? appsConnector;
 
   void setAppsConnector(AppsConnector appsConnector) {
@@ -23,6 +24,7 @@ class AppsConnectService extends ChangeNotifier {
   }
 
   void receivedMessage(ProtoMessageBase msg) {
+    allDevices.add(msg.deviceId);
     allMessages.add(msg);
     notifyListeners();
   }
