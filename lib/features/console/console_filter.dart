@@ -1,3 +1,4 @@
+import 'package:consoleapp/features/console/console_exporter.dart';
 import 'package:flutter/material.dart';
 
 class ConsoleFilterController extends ChangeNotifier {
@@ -13,11 +14,8 @@ class ConsoleFilter extends StatefulWidget {
 
   const ConsoleFilter({
     super.key,
-    required this.context,
     required this.controller,
   });
-
-  final BuildContext context;
 
   @override
   State<ConsoleFilter> createState() => _ConsoleFilterState();
@@ -74,7 +72,9 @@ class _ConsoleFilterState extends State<ConsoleFilter> {
     return Tooltip(
       message: "导出",
       child: MaterialButton(
-        onPressed: () {},
+        onPressed: () {
+          ConsoleExporter.exportWithFilter(widget.controller);
+        },
         materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
         minWidth: 0,
         child: const Icon(

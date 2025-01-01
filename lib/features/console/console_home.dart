@@ -18,7 +18,6 @@ class _ConsoleHomeState extends State<ConsoleHome> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         ConsoleFilter(
-          context: context,
           controller: controller,
         ),
         Divider(height: 1, color: Theme.of(context).dividerColor),
