@@ -70,6 +70,12 @@ class _ConsoleContentState extends State<ConsoleContent> {
       return it.logContent.contains(filterText);
     }).where((it) {
       return displayingLevels.contains(it.logLevel);
+    }).where((it) {
+      if (AppsConnectService.shared.selectedDevice != null) {
+        return it.deviceId == AppsConnectService.shared.selectedDevice?.deviceId;
+      } else {
+        return true;
+      }
     }).toList();
     return SelectionArea(
       child: ListView.separated(

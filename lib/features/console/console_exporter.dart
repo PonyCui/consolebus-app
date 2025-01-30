@@ -45,7 +45,7 @@ class ConsoleExporter {
     FileSaver.instance.saveAs(
       name: fileName,
       bytes: utf8.encode(fileContent),
-      ext: ".txt",
+      ext: "txt",
       mimeType: MimeType.text,
     );
   }

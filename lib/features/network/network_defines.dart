@@ -1,4 +1,5 @@
 import 'package:consoleapp/apps_feature.dart';
+import 'package:consoleapp/features/network/network_home.dart';
 import 'package:flutter/material.dart';
 
 class NetworkFeature extends AppsFeature {
@@ -10,7 +11,7 @@ class NetworkFeature extends AppsFeature {
   @override
   Builder faetureBody() {
     return Builder(builder: (context) {
-      return Container();
+      return const NetworkHome();
     });
   }
 

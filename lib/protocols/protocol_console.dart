@@ -32,7 +32,7 @@ class ProtoConsole extends ProtoMessageBase {
     return ProtoConsole(
       deviceId: json["deviceId"],
       msgId: json["msgId"],
-      featureId: json["featureId"],
+      featureId: "console",
       createdAt: json["createdAt"],
       logTag: json["logTag"],
       logContent: json["logContent"],
