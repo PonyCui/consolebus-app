@@ -1,6 +1,9 @@
+import 'dart:math';
+
 import 'package:consoleapp/protocols/protocol_console.dart';
 import 'package:consoleapp/protocols/protocol_device.dart';
 import 'package:consoleapp/protocols/protocol_network.dart';
+import 'package:consoleapp/protocols/protocol_preference.dart';
 
 class ProtoMessageBase {
   final String deviceId;
@@ -23,6 +26,10 @@ class ProtoMessageBase {
       "createdAt": createdAt,
     };
   }
+
+  static String generateUUID() {
+    return '${Random().nextInt(0xFFFFFFFF).toRadixString(16).padLeft(8, '0')}-${DateTime.now().millisecondsSinceEpoch}';
+  }
 }
 
 class ProtocolMessageFactory {
@@ -33,6 +40,8 @@ class ProtocolMessageFactory {
       return ProtoDevice.fromJSON(json);
     } else if (json["featureId"] == "network") {
       return ProtoNetwork.fromJSON(json);
+    } else if (json["featureId"] == "preference") {
+      return ProtoPreference.fromJson(json);
     }
     return null;
   }
