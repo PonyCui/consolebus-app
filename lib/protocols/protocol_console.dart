@@ -3,11 +3,13 @@ import 'package:consoleapp/protocols/protocol_defines.dart';
 class ProtoConsole extends ProtoMessageBase {
   final String logTag;
   final String logContent;
+  final String logContentType; // text/image/object
   final String logLevel; // debug/info/warn/error
 
   ProtoConsole({
     this.logTag = "",
     required this.logContent,
+    required this.logContentType,
     required this.logLevel,
     required super.deviceId,
     required super.msgId,
@@ -20,6 +22,7 @@ class ProtoConsole extends ProtoMessageBase {
     return {
       "logTag": logTag,
       "logContent": logContent,
+      "logContentType": logContentType,
       "logLevel": logLevel,
       "deviceId": deviceId,
       "msgId": msgId,
@@ -36,6 +39,7 @@ class ProtoConsole extends ProtoMessageBase {
       createdAt: json["createdAt"],
       logTag: json["logTag"],
       logContent: json["logContent"],
+      logContentType: json["logContentType"],
       logLevel: json["logLevel"],
     );
   }

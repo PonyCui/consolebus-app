@@ -43,4 +43,15 @@ class AppsConnectService extends ChangeNotifier {
     selectedDevice = device;
     notifyListeners();
   }
+
+  void removeDevice(ProtoDevice device) {
+    allDevices.remove(device);
+    allMessages.removeWhere((it) {
+      return it.deviceId == device.deviceId;
+    });
+    if (selectedDevice == device) {
+      selectedDevice = null;
+    }
+    notifyListeners();
+  }
 }

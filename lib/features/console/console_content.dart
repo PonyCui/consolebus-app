@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:consoleapp/features/console/console_filter.dart';
 import 'package:consoleapp/protocols/protocol_console.dart';
 import 'package:consoleapp/services/apps_connect_service.dart';
@@ -72,7 +74,8 @@ class _ConsoleContentState extends State<ConsoleContent> {
       return displayingLevels.contains(it.logLevel);
     }).where((it) {
       if (AppsConnectService.shared.selectedDevice != null) {
-        return it.deviceId == AppsConnectService.shared.selectedDevice?.deviceId;
+        return it.deviceId ==
+            AppsConnectService.shared.selectedDevice?.deviceId;
       } else {
         return true;
       }
@@ -98,11 +101,38 @@ class _ConsoleContentState extends State<ConsoleContent> {
     final formattedDateTimeString = formatter.format(dateTime);
     final logTagContent =
         message.logTag.isNotEmpty ? "[${message.logTag}] " : "";
-    return Text(
-      "$formattedDateTimeString > $logTagContent${message.logContent}",
-      style: TextStyle(
-        fontSize: 14,
-        color: _getLogLevelColor(message.logLevel),
+    final content =
+        message.logContentType == "image" ? "点击查看图片" : message.logContent;
+    return GestureDetector(
+      onTap: message.logContentType == "image"
+          ? () {
+              showDialog(
+                context: context,
+                builder: (context) => Dialog(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Image.memory(
+                          base64.decode(message.logContent),
+                          errorBuilder: (context, error, stackTrace) {
+                            return const Text('图片加载失败');
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            }
+          : null,
+      child: Text(
+        "$formattedDateTimeString > $logTagContent$content",
+        style: TextStyle(
+          fontSize: 14,
+          color: _getLogLevelColor(message.logLevel),
+        ),
       ),
     );
   }

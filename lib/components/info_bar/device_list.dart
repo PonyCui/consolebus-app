@@ -34,6 +34,14 @@ class DeviceList extends StatelessWidget {
                         style: const TextStyle(fontSize: 14),
                       ),
                       selected: device == selectedDevice,
+                      trailing: IconButton(
+                        tooltip: "移除设备",
+                        icon: const Icon(Icons.delete_outline, size: 18),
+                        onPressed: () {
+                          AppsConnectService.shared.removeDevice(device);
+                          Navigator.of(context).pop();
+                        },
+                      ),
                       onTap: () {
                         AppsConnectService.shared.setSelectedDevice(device);
                         Navigator.of(context).pop();
