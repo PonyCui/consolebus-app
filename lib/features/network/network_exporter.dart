@@ -1,32 +1,19 @@
-import 'dart:convert';
+import 'package:consoleapp/protocols/protocol_network.dart';
 
 class NetworkExporter {
-  static String toCurl(String requestUri, String requestMethod,
-      Map<String, String> requestHeaders, String? requestBody) {
-    final buffer = StringBuffer();
-    buffer.write('curl -X $requestMethod');
+  static String generateCurlCommand(ProtoNetwork network) {
+    var command = 'curl -X ${network.requestMethod} "${network.requestUri}"';
 
-    // Add headers
-    requestHeaders.forEach((key, value) {
-      buffer.write('-H "$key: $value"');
-    });
-
-    // Add request body if present
-    if (requestBody != null && requestBody.isNotEmpty) {
-      try {
-        // Try to format JSON body
-        final dynamic jsonBody = json.decode(requestBody);
-        final formattedBody = json.encode(jsonBody);
-        buffer.write('-d "${formattedBody.replaceAll('"', '\\"')}"');
-      } catch (e) {
-        // If not JSON, add as raw body
-        buffer.write('-d "${requestBody.replaceAll('"', '\\"')}"');
-      }
+    if (network.requestHeaders.isNotEmpty) {
+      network.requestHeaders.forEach((key, value) {
+        command += ' -H "$key: $value"';
+      });
     }
 
-    // Add URL (must be the last parameter)
-    buffer.write('"$requestUri"');
+    if (network.requestBody != null && network.requestBody!.isNotEmpty) {
+      command += ' -d "${network.requestBody!.replaceAll('"', '\\"')}"';
+    }
 
-    return buffer.toString();
+    return command;
   }
 }

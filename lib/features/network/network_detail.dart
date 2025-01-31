@@ -2,6 +2,10 @@ import 'package:consoleapp/protocols/protocol_network.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
 
+import 'package:re_editor/re_editor.dart';
+import 'package:re_highlight/languages/json.dart';
+import 'package:re_highlight/styles/atom-one-light.dart';
+
 class NetworkDetail extends StatefulWidget {
   final ProtoNetwork? network;
 
@@ -18,7 +22,11 @@ class _NetworkDetailState extends State<NetworkDetail>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 4, vsync: this);
+    _tabController = TabController(
+      length: 4,
+      vsync: this,
+      animationDuration: const Duration(milliseconds: 1),
+    );
   }
 
   @override
@@ -51,10 +59,10 @@ class _NetworkDetailState extends State<NetworkDetail>
             controller: _tabController,
             physics: const NeverScrollableScrollPhysics(),
             children: [
-              RequestMetadataTab(network: widget.network!),
-              RequestBodyTab(network: widget.network!),
-              ResponseMetadataTab(network: widget.network!),
-              ResponseBodyTab(network: widget.network!),
+              _RequestMetadataTab(network: widget.network!),
+              _RequestBodyTab(network: widget.network!),
+              _ResponseMetadataTab(network: widget.network!),
+              _ResponseBodyTab(network: widget.network!),
             ],
           ),
         ),
@@ -63,10 +71,10 @@ class _NetworkDetailState extends State<NetworkDetail>
   }
 }
 
-class RequestMetadataTab extends StatelessWidget {
+class _RequestMetadataTab extends StatelessWidget {
   final ProtoNetwork network;
 
-  const RequestMetadataTab({super.key, required this.network});
+  const _RequestMetadataTab({super.key, required this.network});
 
   @override
   Widget build(BuildContext context) {
@@ -155,16 +163,16 @@ class RequestMetadataTab extends StatelessWidget {
   }
 }
 
-class RequestBodyTab extends StatefulWidget {
+class _RequestBodyTab extends StatefulWidget {
   final ProtoNetwork network;
 
-  const RequestBodyTab({super.key, required this.network});
+  const _RequestBodyTab({super.key, required this.network});
 
   @override
-  State<RequestBodyTab> createState() => _RequestBodyTabState();
+  State<_RequestBodyTab> createState() => _RequestBodyTabState();
 }
 
-class _RequestBodyTabState extends State<RequestBodyTab> {
+class _RequestBodyTabState extends State<_RequestBodyTab> {
   String _viewType = 'plain';
 
   @override
@@ -223,14 +231,7 @@ class _RequestBodyTabState extends State<RequestBodyTab> {
 
     switch (_viewType) {
       case 'json':
-        try {
-          final jsonData = json.decode(content);
-          final prettyJson =
-              const JsonEncoder.withIndent('  ').convert(jsonData);
-          return SelectableText(prettyJson);
-        } catch (e) {
-          return SelectableText(content);
-        }
+        return _JSONCodeEditor(content: content);
       case 'plain':
         return SelectableText(content);
       case 'image':
@@ -260,24 +261,77 @@ class _RequestBodyTabState extends State<RequestBodyTab> {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.max,
         children: [
           _buildViewTypeSelector(),
           const SizedBox(height: 16),
-          _buildBodyContent(widget.network.requestBody),
+          Expanded(child: _buildBodyContent(widget.network.requestBody)),
         ],
       ),
     );
   }
 }
 
-class ResponseMetadataTab extends StatelessWidget {
+class _JSONCodeEditor extends StatelessWidget {
+  const _JSONCodeEditor({
+    super.key,
+    required this.content,
+  });
+
+  final String content;
+
+  @override
+  Widget build(BuildContext context) {
+    String prettyJson = content;
+    try {
+      final jsonData = json.decode(content);
+      prettyJson = const JsonEncoder.withIndent('   ').convert(jsonData);
+    } catch (e) {}
+
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return SizedBox(
+          width: constraints.maxWidth,
+          height: constraints.maxHeight,
+          child: CodeEditor(
+            controller: CodeLineEditingController.fromText(prettyJson),
+            readOnly: true,
+            indicatorBuilder:
+                (context, editingController, chunkController, notifier) {
+              return Row(
+                children: [
+                  DefaultCodeLineNumber(
+                    controller: editingController,
+                    notifier: notifier,
+                  ),
+                  DefaultCodeChunkIndicator(
+                      width: 20,
+                      controller: chunkController,
+                      notifier: notifier)
+                ],
+              );
+            },
+            style: CodeEditorStyle(
+              codeTheme: CodeHighlightTheme(
+                languages: {'json': CodeHighlightThemeMode(mode: langJson)},
+                theme: atomOneLightTheme,
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
+
+class _ResponseMetadataTab extends StatelessWidget {
   final ProtoNetwork network;
 
-  const ResponseMetadataTab({super.key, required this.network});
+  const _ResponseMetadataTab({super.key, required this.network});
 
   @override
   Widget build(BuildContext context) {
@@ -365,16 +419,16 @@ class ResponseMetadataTab extends StatelessWidget {
   }
 }
 
-class ResponseBodyTab extends StatefulWidget {
+class _ResponseBodyTab extends StatefulWidget {
   final ProtoNetwork network;
 
-  const ResponseBodyTab({super.key, required this.network});
+  const _ResponseBodyTab({super.key, required this.network});
 
   @override
-  State<ResponseBodyTab> createState() => _ResponseBodyTabState();
+  State<_ResponseBodyTab> createState() => _ResponseBodyTabState();
 }
 
-class _ResponseBodyTabState extends State<ResponseBodyTab> {
+class _ResponseBodyTabState extends State<_ResponseBodyTab> {
   String _viewType = 'plain';
 
   @override
@@ -433,14 +487,7 @@ class _ResponseBodyTabState extends State<ResponseBodyTab> {
 
     switch (_viewType) {
       case 'json':
-        try {
-          final jsonData = json.decode(content);
-          final prettyJson =
-              const JsonEncoder.withIndent('  ').convert(jsonData);
-          return SelectableText(prettyJson);
-        } catch (e) {
-          return SelectableText(content);
-        }
+        return _JSONCodeEditor(content: content);
       case 'plain':
         return SelectableText(content);
       case 'image':
@@ -470,14 +517,15 @@ class _ResponseBodyTabState extends State<ResponseBodyTab> {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.max,
         children: [
           _buildViewTypeSelector(),
           const SizedBox(height: 16),
-          _buildBodyContent(widget.network.responseBody),
+          Expanded(child: _buildBodyContent(widget.network.responseBody)),
         ],
       ),
     );
