@@ -1,3 +1,4 @@
+import 'package:consoleapp/services/apps_connect_service.dart';
 import 'package:flutter/material.dart';
 
 import 'network_filter_options_panel.dart';
@@ -79,7 +80,26 @@ class _NetworkFilterState extends State<NetworkFilter> {
           ),
           const SizedBox(width: 12),
           _renderFilterOptions(),
+          _renderClearButton(),
+          const SizedBox(width: 12),
         ],
+      ),
+    );
+  }
+
+  Tooltip _renderClearButton() {
+    return Tooltip(
+      message: "清空记录",
+      child: MaterialButton(
+        onPressed: () {
+          AppsConnectService.shared.clearNetworkLogs();
+        },
+        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+        minWidth: 0,
+        child: const Icon(
+          Icons.delete_outline,
+          size: 18,
+        ),
       ),
     );
   }

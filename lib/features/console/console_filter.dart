@@ -1,5 +1,6 @@
 import 'package:consoleapp/features/console/console_exporter.dart';
 import 'package:consoleapp/features/console/console_filter_log_level_panel.dart';
+import 'package:consoleapp/services/apps_connect_service.dart';
 import 'package:flutter/material.dart';
 
 class ConsoleFilterController extends ChangeNotifier {
@@ -63,8 +64,26 @@ class _ConsoleFilterState extends State<ConsoleFilter> {
           const SizedBox(width: 12),
           _renderFilterLevel(),
           _renderExportButton(),
+          _renderClearButton(),
           const SizedBox(width: 12),
         ],
+      ),
+    );
+  }
+
+  Tooltip _renderClearButton() {
+    return Tooltip(
+      message: "清空日志",
+      child: MaterialButton(
+        onPressed: () {
+          AppsConnectService.shared.clearConsoleLogs();
+        },
+        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+        minWidth: 0,
+        child: const Icon(
+          Icons.delete_outline,
+          size: 18,
+        ),
       ),
     );
   }

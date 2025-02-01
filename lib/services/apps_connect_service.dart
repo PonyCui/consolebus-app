@@ -54,4 +54,14 @@ class AppsConnectService extends ChangeNotifier {
     }
     notifyListeners();
   }
+
+  void clearConsoleLogs() {
+    allMessages.removeWhere((it) => it.featureId == "console");
+    notifyListeners();
+  }
+
+  void clearNetworkLogs() {
+    allMessages.removeWhere((it) => it.featureId == "network");
+    notifyListeners();
+  }
 }

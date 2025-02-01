@@ -116,6 +116,7 @@ class _ConsoleContentState extends State<ConsoleContent> {
                         padding: const EdgeInsets.all(16.0),
                         child: Image.memory(
                           base64.decode(message.logContent),
+                          height: MediaQuery.of(context).size.height * 0.8,
                           errorBuilder: (context, error, stackTrace) {
                             return const Text('图片加载失败');
                           },
