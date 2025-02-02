@@ -99,12 +99,20 @@ class NetworkList extends StatelessWidget {
               ),
               TextSpan(
                 text: network.responseStatusCode <= 0
-                    ? 'Pending'
+                    ? (network.responseStatusCode == -1
+                        ? 'Error'
+                        : network.responseStatusCode == -2
+                            ? 'Cancelled'
+                            : 'Pending')
                     : '${((network.responseTime.millisecondsSinceEpoch - network.requestTime.millisecondsSinceEpoch) / 1000).toStringAsFixed(2)}s',
                 style: TextStyle(
-                  color: network.responseStatusCode <= 0
-                      ? Colors.orange
-                      : Colors.grey[600],
+                  color: network.responseStatusCode == -1
+                      ? Colors.red
+                      : network.responseStatusCode == -2
+                          ? Colors.orange
+                          : network.responseStatusCode <= 0
+                              ? Colors.blue
+                              : Colors.grey[600],
                   fontSize: 12,
                 ),
               ),

@@ -343,6 +343,13 @@ class _ResponseMetadataTab extends StatelessWidget {
           SelectionArea(
             child: _buildMetadataTable([
               {'Status Code': network.responseStatusCode.toString()},
+              {'Status': network.responseStatusCode == -1
+                  ? 'Error'
+                  : network.responseStatusCode == -2
+                      ? 'Cancelled'
+                      : network.responseStatusCode <= 0
+                          ? 'Pending'
+                          : 'Done'},
               {'Headers': network.responseHeaders},
             ]),
           ),

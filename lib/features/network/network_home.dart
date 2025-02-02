@@ -58,6 +58,7 @@ class _NetworkHomeState extends State<NetworkHome> {
         return true;
       }
     }).toList();
+    final selectedNetwork = filteredNetworks.isEmpty ? null : this.selectedNetwork;
 
     return Column(
       children: [
@@ -78,7 +79,7 @@ class _NetworkHomeState extends State<NetworkHome> {
                   selectedNetwork: selectedNetwork,
                   onSelectNetwork: (network) {
                     setState(() {
-                      selectedNetwork = network;
+                      this.selectedNetwork = network;
                     });
                   },
                 ),
