@@ -1,4 +1,5 @@
 import 'package:consoleapp/components/info_bar/device_list.dart';
+import 'package:consoleapp/components/info_bar/import_button.dart';
 import 'package:flutter/material.dart';
 import 'package:consoleapp/services/apps_connect_service.dart';
 
@@ -40,6 +41,9 @@ class _AppsInfoBarState extends State<AppsInfoBar> {
         children: [
           const SizedBox(width: 12),
           DeviceList(devices: devices, selectedDevice: selectedDevice),
+          const Spacer(),
+          const ImportButton(),
+          const SizedBox(width: 8),
         ],
       ),
     );
