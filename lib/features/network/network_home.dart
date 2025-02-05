@@ -2,6 +2,7 @@ import 'package:consoleapp/features/network/network_detail.dart';
 import 'package:consoleapp/features/network/network_list.dart';
 import 'package:consoleapp/protocols/protocol_network.dart';
 import 'package:consoleapp/services/apps_connect_service.dart';
+import 'package:consoleapp/utils/apps_util.dart';
 import 'package:flutter/material.dart';
 import 'package:consoleapp/features/network/network_filter.dart';
 import 'package:flutter/services.dart';
@@ -42,6 +43,7 @@ class _NetworkHomeState extends State<NetworkHome> {
 
   @override
   Widget build(BuildContext context) {
+    final isMobile = AppsUtil.isMobileMode(context);
     final filteredNetworks = AppsConnectService.shared.allMessages
         .whereType<ProtoNetwork>()
         .where((network) {
@@ -58,7 +60,8 @@ class _NetworkHomeState extends State<NetworkHome> {
         return true;
       }
     }).toList();
-    final selectedNetwork = filteredNetworks.isEmpty ? null : this.selectedNetwork;
+    final selectedNetwork =
+        filteredNetworks.isEmpty ? null : this.selectedNetwork;
 
     return Column(
       children: [
@@ -70,33 +73,67 @@ class _NetworkHomeState extends State<NetworkHome> {
           color: Theme.of(context).dividerColor,
         ),
         Expanded(
-          child: Row(
-            children: [
-              Expanded(
-                flex: 2,
-                child: NetworkList(
-                  networks: filteredNetworks,
-                  selectedNetwork: selectedNetwork,
-                  onSelectNetwork: (network) {
-                    setState(() {
-                      this.selectedNetwork = network;
-                    });
-                  },
+          child: isMobile
+              ? Column(
+                  children: [
+                    Expanded(
+                      flex: 1,
+                      child: NetworkList(
+                        networks: filteredNetworks,
+                        selectedNetwork: selectedNetwork,
+                        onSelectNetwork: (network) {
+                          setState(() {
+                            if (this.selectedNetwork == network) {
+                              this.selectedNetwork = null;
+                            } else {
+                              this.selectedNetwork = network;
+                            }
+                          });
+                        },
+                      ),
+                    ),
+                    Divider(
+                      height: 1,
+                      color: Theme.of(context).dividerColor,
+                    ),
+                    selectedNetwork != null ? Expanded(
+                      flex: 2,
+                      child: NetworkDetail(
+                        key: Key(
+                            'network_${selectedNetwork.uniqueId}'),
+                        network: selectedNetwork,
+                      ),
+                    ) : const SizedBox(),
+                  ],
+                )
+              : Row(
+                  children: [
+                    Expanded(
+                      flex: 2,
+                      child: NetworkList(
+                        networks: filteredNetworks,
+                        selectedNetwork: selectedNetwork,
+                        onSelectNetwork: (network) {
+                          setState(() {
+                            this.selectedNetwork = network;
+                          });
+                        },
+                      ),
+                    ),
+                    Container(
+                      width: 1,
+                      color: Theme.of(context).dividerColor,
+                    ),
+                    Expanded(
+                      flex: 3,
+                      child: NetworkDetail(
+                        key: Key(
+                            'network_${selectedNetwork?.uniqueId ?? "empty"}'),
+                        network: selectedNetwork,
+                      ),
+                    ),
+                  ],
                 ),
-              ),
-              Container(
-                width: 1,
-                color: Theme.of(context).dividerColor,
-              ),
-              Expanded(
-                flex: 3,
-                child: NetworkDetail(
-                  key: Key('network_${selectedNetwork?.uniqueId ?? "empty"}'),
-                  network: selectedNetwork,
-                ),
-              ),
-            ],
-          ),
         ),
       ],
     );

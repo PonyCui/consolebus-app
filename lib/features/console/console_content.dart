@@ -3,7 +3,9 @@ import 'dart:convert';
 import 'package:consoleapp/features/console/console_filter.dart';
 import 'package:consoleapp/protocols/protocol_console.dart';
 import 'package:consoleapp/services/apps_connect_service.dart';
+import 'package:consoleapp/utils/apps_util.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 
 class ConsoleContent extends StatefulWidget {
@@ -96,8 +98,9 @@ class _ConsoleContentState extends State<ConsoleContent> {
   }
 
   Widget _renderLogItem(ProtoConsole message) {
+    final isMobile = AppsUtil.isMobileMode(context);
     final dateTime = DateTime.fromMillisecondsSinceEpoch(message.createdAt);
-    final formatter = DateFormat('yyyy-MM-dd HH:mm:ss:S');
+    final formatter = DateFormat(isMobile ? 'HH:mm:ss:S' : 'yyyy-MM-dd HH:mm:ss:S');
     final formattedDateTimeString = formatter.format(dateTime);
     final logTagContent =
         message.logTag.isNotEmpty ? "[${message.logTag}] " : "";
@@ -128,13 +131,66 @@ class _ConsoleContentState extends State<ConsoleContent> {
               );
             }
           : null,
-      child: Text(
-        "$formattedDateTimeString > $logTagContent$content",
-        style: TextStyle(
-          fontSize: 14,
-          color: _getLogLevelColor(message.logLevel),
-        ),
-      ),
+      onLongPress: message.logContentType != "image"
+          ? () {
+              final data = ClipboardData(text: message.logContent);
+              Clipboard.setData(data);
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('已复制到剪贴板')),
+              );
+            }
+          : null,
+      child: isMobile
+          ? Dismissible(
+              key: Key(message.createdAt.toString()),
+              direction: DismissDirection.endToStart,
+              background: Container(
+                color: Colors.blue,
+                alignment: Alignment.centerRight,
+                padding: const EdgeInsets.only(right: 16),
+                child: const Icon(
+                  Icons.content_copy,
+                  color: Colors.white,
+                ),
+              ),
+              confirmDismiss: (direction) async {
+                if (message.logContentType != "image") {
+                  final data = ClipboardData(text: message.logContent);
+                  await Clipboard.setData(data);
+                  if (!mounted) return false;
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('已复制到剪贴板')),
+                  );
+                }
+                return false;
+              },
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      "$formattedDateTimeString > $logTagContent$content",
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: _getLogLevelColor(message.logLevel),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            )
+          : Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    "$formattedDateTimeString > $logTagContent$content",
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: _getLogLevelColor(message.logLevel),
+                    ),
+                  ),
+                ),
+              ],
+            ),
     );
   }
 

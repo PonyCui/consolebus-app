@@ -1,4 +1,5 @@
 import 'package:consoleapp/protocols/protocol_network.dart';
+import 'package:consoleapp/utils/apps_util.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
 
@@ -84,7 +85,7 @@ class _RequestMetadataTab extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           SelectionArea(
-            child: _buildMetadataTable([
+            child: _buildMetadataTable(context, [
               {'URI': network.requestUri},
               {'Method': network.requestMethod},
               {'Headers': network.requestHeaders},
@@ -95,15 +96,17 @@ class _RequestMetadataTab extends StatelessWidget {
     );
   }
 
-  Widget _buildMetadataTable(List<Map<String, dynamic>> data) {
+  Widget _buildMetadataTable(
+      BuildContext context, List<Map<String, dynamic>> data) {
+    final isMobile = AppsUtil.isMobileMode(context);
     return Table(
       border: TableBorder.all(
         color: Colors.grey[300]!,
         width: 1,
       ),
-      columnWidths: const {
-        0: FixedColumnWidth(150),
-        1: FlexColumnWidth(),
+      columnWidths: {
+        0: FixedColumnWidth(isMobile ? 100 : 150),
+        1: const FlexColumnWidth(),
       },
       children: data.map((item) {
         final entry = item.entries.first;
@@ -341,15 +344,17 @@ class _ResponseMetadataTab extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           SelectionArea(
-            child: _buildMetadataTable([
+            child: _buildMetadataTable(context, [
               {'Status Code': network.responseStatusCode.toString()},
-              {'Status': network.responseStatusCode == -1
-                  ? 'Error'
-                  : network.responseStatusCode == -2
-                      ? 'Cancelled'
-                      : network.responseStatusCode <= 0
-                          ? 'Pending'
-                          : 'Done'},
+              {
+                'Status': network.responseStatusCode == -1
+                    ? 'Error'
+                    : network.responseStatusCode == -2
+                        ? 'Cancelled'
+                        : network.responseStatusCode <= 0
+                            ? 'Pending'
+                            : 'Done'
+              },
               {'Headers': network.responseHeaders},
             ]),
           ),
@@ -358,15 +363,17 @@ class _ResponseMetadataTab extends StatelessWidget {
     );
   }
 
-  Widget _buildMetadataTable(List<Map<String, dynamic>> data) {
+  Widget _buildMetadataTable(
+      BuildContext context, List<Map<String, dynamic>> data) {
+    final isMobile = AppsUtil.isMobileMode(context);
     return Table(
       border: TableBorder.all(
         color: Colors.grey[300]!,
         width: 1,
       ),
-      columnWidths: const {
-        0: FixedColumnWidth(150),
-        1: FlexColumnWidth(),
+      columnWidths: {
+        0: FixedColumnWidth(isMobile ? 100 : 150),
+        1: const FlexColumnWidth(),
       },
       children: data.map((item) {
         final entry = item.entries.first;

@@ -1,4 +1,5 @@
 import 'package:consoleapp/features/console/console_filter.dart';
+import 'package:consoleapp/utils/apps_util.dart';
 import 'package:flutter/material.dart';
 
 class ConsoleFilterLogLevelPanel extends StatefulWidget {
@@ -30,12 +31,13 @@ class _ConsoleFilterLogLevelPanelState
 
   @override
   Widget build(BuildContext context) {
+    final isMobile = AppsUtil.isMobileMode(context);
     return Scaffold(
       backgroundColor: Colors.transparent,
       body: Stack(
         children: [
           Positioned(
-            top: 44,
+            top: isMobile ? 80 : 44,
             left: 0,
             right: 0,
             bottom: 0,
@@ -49,14 +51,15 @@ class _ConsoleFilterLogLevelPanelState
           Positioned(
             top: 0,
             left: 0,
-            height: 44,
-            width: 44,
+            height: isMobile ? 0 : 44,
+            width: isMobile ? 0 : 44,
             child: Container(color: Colors.black.withOpacity(0.2)),
           ),
           Positioned(
-            right: 44,
-            top: 44,
-            width: 200,
+            left: isMobile ? 0 : null,
+            right: isMobile ? null : 44,
+            top: isMobile ? 80 : 44,
+            width: isMobile ? MediaQuery.of(context).size.width : 200,
             child: Container(
               color: Colors.white,
               child: Column(

@@ -1,3 +1,4 @@
+import 'package:consoleapp/utils/apps_util.dart';
 import 'package:flutter/material.dart';
 import 'network_filter.dart';
 
@@ -30,6 +31,7 @@ class _NetworkFilterOptionsPanelState extends State<NetworkFilterOptionsPanel> {
 
   @override
   Widget build(BuildContext context) {
+    final isMobile = AppsUtil.isMobileMode(context);
     return Scaffold(
       backgroundColor: Colors.transparent,
       body: Stack(
@@ -49,12 +51,12 @@ class _NetworkFilterOptionsPanelState extends State<NetworkFilterOptionsPanel> {
           Positioned(
             top: 0,
             left: 0,
-            height: 44,
-            width: 44,
+            height: isMobile ? 0 : 44,
+            width: isMobile ? 0 : 44,
             child: Container(color: Colors.black.withOpacity(0.2)),
           ),
           Positioned(
-            right: 44,
+            right: isMobile ? 0 : 44,
             top: 44,
             width: 200,
             child: Container(

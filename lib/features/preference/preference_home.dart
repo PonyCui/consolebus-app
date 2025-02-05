@@ -73,7 +73,7 @@ class _PreferenceHomeState extends State<PreferenceHome> {
           })
           .values
           .toList()
-          ..sort((a, b) => a.key.compareTo(b.key));
+        ..sort((a, b) => a.key.compareTo(b.key));
       if (selectedPreference != null) {
         selectedPreference = filteredPreferences.where((it) {
           return it.key == selectedPreference?.key;
@@ -84,6 +84,7 @@ class _PreferenceHomeState extends State<PreferenceHome> {
 
   @override
   Widget build(BuildContext context) {
+    final isMobile = MediaQuery.of(context).size.width < 600;
     return Column(
       children: [
         PreferenceFilter(controller: filterController),
@@ -92,42 +93,88 @@ class _PreferenceHomeState extends State<PreferenceHome> {
           color: Theme.of(context).dividerColor,
         ),
         Expanded(
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Expanded(
-                flex: 2,
-                child: ListView.builder(
-                  itemCount: filteredPreferences.length,
-                  itemBuilder: (context, index) {
-                    final preference = filteredPreferences[index];
-                    return ListTile(
-                      title: Text(preference.key),
-                      subtitle: Text(
-                        '${json.encode(preference.value).replaceAll("\n", "")}',
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
+          child: isMobile
+              ? Column(
+                  children: [
+                    Expanded(
+                      flex: 1,
+                      child: ListView.builder(
+                        itemCount: filteredPreferences.length,
+                        itemBuilder: (context, index) {
+                          final preference = filteredPreferences[index];
+                          return ListTile(
+                            title: Text(
+                              preference.key,
+                              style: TextStyle(fontSize: 14),
+                            ),
+                            subtitle: Text(
+                              '${json.encode(preference.value).replaceAll("\n", "")}',
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(fontSize: 12),
+                            ),
+                            selected: selectedPreference == preference,
+                            onTap: () {
+                              setState(() {
+                                if (selectedPreference == preference) {
+                                  selectedPreference = null;
+                                } else {
+                                  selectedPreference = preference;
+                                }
+                              });
+                            },
+                          );
+                        },
                       ),
-                      selected: selectedPreference == preference,
-                      onTap: () {
-                        setState(() {
-                          selectedPreference = preference;
-                        });
-                      },
-                    );
-                  },
+                    ),
+                    if (selectedPreference != null)
+                      Expanded(
+                        flex: 2,
+                        child: PreferenceDetail(
+                          key: Key(
+                              "${selectedPreference?.key ?? ""}_${selectedPreference?.createdAt}"),
+                          preference: selectedPreference,
+                        ),
+                      ),
+                  ],
+                )
+              : Row(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Expanded(
+                      flex: 2,
+                      child: ListView.builder(
+                        itemCount: filteredPreferences.length,
+                        itemBuilder: (context, index) {
+                          final preference = filteredPreferences[index];
+                          return ListTile(
+                            title: Text(preference.key),
+                            subtitle: Text(
+                              '${json.encode(preference.value).replaceAll("\n", "")}',
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            selected: selectedPreference == preference,
+                            onTap: () {
+                              setState(() {
+                                selectedPreference = preference;
+                              });
+                            },
+                          );
+                        },
+                      ),
+                    ),
+                    const VerticalDivider(width: 1),
+                    Expanded(
+                      flex: 3,
+                      child: PreferenceDetail(
+                        key: Key(
+                            "${selectedPreference?.key ?? ""}_${selectedPreference?.createdAt}"),
+                        preference: selectedPreference,
+                      ),
+                    ),
+                  ],
                 ),
-              ),
-              const VerticalDivider(width: 1),
-              Expanded(
-                flex: 3,
-                child: PreferenceDetail(
-                    key: Key(
-                        "${selectedPreference?.key ?? ""}_${selectedPreference?.createdAt}"),
-                    preference: selectedPreference),
-              ),
-            ],
-          ),
         ),
       ],
     );

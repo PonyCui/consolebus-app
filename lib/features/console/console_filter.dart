@@ -1,6 +1,7 @@
 import 'package:consoleapp/features/console/console_exporter.dart';
 import 'package:consoleapp/features/console/console_filter_log_level_panel.dart';
 import 'package:consoleapp/services/apps_connect_service.dart';
+import 'package:consoleapp/utils/apps_util.dart';
 import 'package:flutter/material.dart';
 
 class ConsoleFilterController extends ChangeNotifier {
@@ -52,22 +53,49 @@ class _ConsoleFilterState extends State<ConsoleFilter> {
 
   @override
   Widget build(BuildContext context) {
+    final isMobile = AppsUtil.isMobileMode(context);
     return Container(
-      height: 44,
       color: Colors.white,
-      child: Row(
-        children: [
-          const SizedBox(width: 12),
-          Expanded(
-            child: _renderFilterText(context),
-          ),
-          const SizedBox(width: 12),
-          _renderFilterLevel(),
-          _renderExportButton(),
-          _renderClearButton(),
-          const SizedBox(width: 12),
-        ],
-      ),
+      child: isMobile
+          ? Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const SizedBox(height: 8),
+                Container(
+                  height: 28,
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                  child: _renderFilterText(context),
+                ),
+                const SizedBox(height: 8),
+                Container(
+                  height: 28,
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                  child: Row(
+                    children: [
+                      Expanded(child: _renderFilterLevel()),
+                      _renderExportButton(),
+                      _renderClearButton(),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 8),
+              ],
+            )
+          : Container(
+              height: 44,
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: _renderFilterText(context),
+                  ),
+                  const SizedBox(width: 12),
+                  _renderFilterLevel(),
+                  _renderExportButton(),
+                  _renderClearButton(),
+                ],
+              ),
+            ),
     );
   }
 
