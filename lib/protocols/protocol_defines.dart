@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:consoleapp/protocols/protocol_console.dart';
 import 'package:consoleapp/protocols/protocol_device.dart';
+import 'package:consoleapp/protocols/protocol_filesystem.dart';
 import 'package:consoleapp/protocols/protocol_network.dart';
 import 'package:consoleapp/protocols/protocol_preference.dart';
 
@@ -42,6 +43,8 @@ class ProtocolMessageFactory {
       return ProtoNetwork.fromJSON(json);
     } else if (json["featureId"] == "preference") {
       return ProtoPreference.fromJson(json);
+    } else if (json["featureId"] == "filesystem") {
+      return ProtoFilesystem.fromJson(json);
     }
     return null;
   }

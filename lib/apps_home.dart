@@ -1,5 +1,6 @@
 import 'package:consoleapp/apps_feature.dart';
 import 'package:consoleapp/features/console/console_defines.dart';
+import 'package:consoleapp/features/filesystem/filesystem_defines.dart';
 import 'package:consoleapp/features/network/network_defines.dart';
 import 'package:consoleapp/features/preference/preference_defines.dart';
 import 'package:consoleapp/components/info_bar/info_bar.dart';
@@ -26,6 +27,7 @@ class _AppsHomeState extends State<AppsHome> {
     AppsFeatureManager.shared.registerFeature(ConsoleFeature());
     AppsFeatureManager.shared.registerFeature(NetworkFeature());
     AppsFeatureManager.shared.registerFeature(PreferenceFeature());
+    AppsFeatureManager.shared.registerFeature(FilesystemFeature());
     selectedFeature =
         AppsFeatureManager.shared.allFeatures().first.featureIdentifier();
     final appsConnector = AppsConnectorWS(wsPort: 9090);
